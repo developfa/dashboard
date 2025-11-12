@@ -12,23 +12,17 @@
 - Apache 웹서버
 - Git
 
-## 🔑 API 키 발급
+## 🔑 필요한 설정
 
-배포 전에 다음 API 키들을 발급받아야 합니다:
+배포 전에 다음 설정들을 준비해야 합니다:
 
-### 1. Google OAuth 설정
+### 1. 사용자 인증 정보
 
-1. [Google Cloud Console](https://console.cloud.google.com/) 접속
-2. 새 프로젝트 생성 또는 기존 프로젝트 선택
-3. "API 및 서비스" > "사용자 인증 정보" 이동
-4. "사용자 인증 정보 만들기" > "OAuth 클라이언트 ID" 선택
-5. 애플리케이션 유형: 웹 애플리케이션
-6. 승인된 리디렉션 URI 추가:
-   - `https://dash.englishfriend.kr/api/auth/callback/google`
-   - `http://localhost:3000/api/auth/callback/google` (개발용)
-7. 클라이언트 ID와 비밀번호 저장
-
-### 2. OpenWeatherMap API
+개인용 대시보드이므로 간단한 이메일/비밀번호 인증을 사용합니다.
+환경 변수에서 설정할 정보:
+- `USER_EMAIL`: 로그인에 사용할 이메일 주소
+- `USER_PASSWORD`: 로그인 비밀번호 (안전한 비밀번호 사용 권장)
+- `USER_NAME`: 대시보드에 표시될 사용자 이름
 
 1. [OpenWeatherMap](https://openweathermap.org/api) 접속
 2. 무료 플랜 가입 (1분당 60회 호출 가능)
@@ -88,8 +82,9 @@ DATABASE_URL="file:./prod.db"
 NEXTAUTH_URL=https://dash.englishfriend.kr
 NEXTAUTH_SECRET=your-random-secret-here-use-openssl-rand-base64-32
 
-GOOGLE_CLIENT_ID=your-google-client-id
-GOOGLE_CLIENT_SECRET=your-google-client-secret
+USER_EMAIL=your-email@example.com
+USER_PASSWORD=your-secure-password
+USER_NAME=사용자이름
 
 OPENWEATHER_API_KEY=your-openweather-api-key
 EXCHANGERATE_API_KEY=your-exchangerate-api-key
@@ -285,11 +280,11 @@ npm install
 npx prisma generate
 ```
 
-### Google OAuth 리디렉션 오류
+### 로그인 실패 문제
 
-1. Google Cloud Console에서 승인된 리디렉션 URI 확인
-2. `https://dash.englishfriend.kr/api/auth/callback/google` 정확히 입력되었는지 확인
-3. `.env` 파일의 `NEXTAUTH_URL` 확인
+1. `.env` 파일의 `USER_EMAIL`과 `USER_PASSWORD` 확인
+2. 로그인 시 입력한 이메일과 비밀번호가 정확한지 확인
+3. `.env` 파일의 `NEXTAUTH_URL`과 `NEXTAUTH_SECRET` 확인
 
 ## 📊 모니터링
 

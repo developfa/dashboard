@@ -2,18 +2,46 @@
 
 import { useSession, signIn } from "next-auth/react"
 import { useRouter } from "next/navigation"
-import { useEffect } from "react"
-import { FaGoogle, FaSpinner } from "react-icons/fa"
+import { useEffect, useState } from "react"
+import { FaEnvelope, FaLock, FaSpinner } from "react-icons/fa"
 
 export default function Home() {
   const { data: session, status } = useSession()
   const router = useRouter()
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [error, setError] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
     if (status === "authenticated") {
       router.push("/dashboard")
     }
   }, [status, router])
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError("")
+    setIsLoading(true)
+
+    try {
+      const result = await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
+      })
+
+      if (result?.error) {
+        setError("이메일 또는 비밀번호가 올바르지 않습니다")
+      } else if (result?.ok) {
+        router.push("/dashboard")
+      }
+    } catch (error) {
+      setError("로그인 중 오류가 발생했습니다")
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   if (status === "loading") {
     return (
@@ -41,13 +69,72 @@ export default function Home() {
 
         {/* Login Card */}
         <div className="bg-white rounded-3xl shadow-xl border border-orange-100 p-8 backdrop-blur-sm">
-          <button
-            onClick={() => signIn("google")}
-            className="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white py-4 px-6 rounded-xl font-semibold hover:from-orange-600 hover:to-orange-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
-          >
-            <FaGoogle className="text-xl" />
-            Google 계정으로 시작하기
-          </button>
+          <form onSubmit={handleSubmit} className="space-y-5">
+            {/* Email Input */}
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-stone-700 mb-2">
+                이메일
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                  <FaEnvelope className="text-stone-400" />
+                </div>
+                <input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  className="w-full pl-11 pr-4 py-3 border border-stone-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 outline-none"
+                  placeholder="이메일을 입력하세요"
+                />
+              </div>
+            </div>
+
+            {/* Password Input */}
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-stone-700 mb-2">
+                비밀번호
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                  <FaLock className="text-stone-400" />
+                </div>
+                <input
+                  id="password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  className="w-full pl-11 pr-4 py-3 border border-stone-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 outline-none"
+                  placeholder="비밀번호를 입력하세요"
+                />
+              </div>
+            </div>
+
+            {/* Error Message */}
+            {error && (
+              <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-xl text-sm">
+                {error}
+              </div>
+            )}
+
+            {/* Submit Button */}
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white py-4 px-6 rounded-xl font-semibold hover:from-orange-600 hover:to-orange-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+            >
+              {isLoading ? (
+                <>
+                  <FaSpinner className="animate-spin" />
+                  로그인 중...
+                </>
+              ) : (
+                "로그인"
+              )}
+            </button>
+          </form>
 
           {/* Features List */}
           <div className="mt-8 pt-8 border-t border-orange-100">

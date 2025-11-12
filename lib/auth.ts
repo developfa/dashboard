@@ -1,39 +1,63 @@
 import { NextAuthOptions } from "next-auth"
-import GoogleProvider from "next-auth/providers/google"
-import { PrismaAdapter } from "@auth/prisma-adapter"
-import { prisma } from "./prisma"
+import CredentialsProvider from "next-auth/providers/credentials"
 
 export const authOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(prisma) as any,
   providers: [
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID || "",
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
-      authorization: {
-        params: {
-          scope: [
-            "openid",
-            "email",
-            "profile",
-            "https://www.googleapis.com/auth/gmail.readonly",
-            "https://www.googleapis.com/auth/calendar.readonly",
-          ].join(" "),
-          access_type: "offline",
-          prompt: "consent",
-        },
+    CredentialsProvider({
+      name: "Credentials",
+      credentials: {
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" }
       },
-    }),
+      async authorize(credentials) {
+        // 환경 변수에서 설정된 이메일과 비밀번호 확인
+        const validEmail = process.env.USER_EMAIL
+        const validPassword = process.env.USER_PASSWORD
+
+        if (!validEmail || !validPassword) {
+          throw new Error("인증 설정이 올바르지 않습니다")
+        }
+
+        if (
+          credentials?.email === validEmail &&
+          credentials?.password === validPassword
+        ) {
+          // 인증 성공
+          return {
+            id: "1",
+            email: validEmail,
+            name: process.env.USER_NAME || "사용자",
+          }
+        }
+
+        // 인증 실패
+        return null
+      }
+    })
   ],
   callbacks: {
-    async session({ session, user }) {
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id
+        token.email = user.email
+        token.name = user.name
+      }
+      return token
+    },
+    async session({ session, token }) {
       if (session.user) {
-        session.user.id = user.id
+        session.user.id = token.id as string
+        session.user.email = token.email as string
+        session.user.name = token.name as string
       }
       return session
     },
   },
   pages: {
     signIn: "/",
+  },
+  session: {
+    strategy: "jwt",
   },
   secret: process.env.NEXTAUTH_SECRET,
 }
