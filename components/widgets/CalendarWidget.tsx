@@ -45,8 +45,8 @@ export function CalendarWidget({ refreshInterval = 600000 }: { refreshInterval?:
   if (loading) {
     return (
       <Card title="Google Calendar">
-        <div className="flex items-center justify-center py-8">
-          <FaSpinner className="animate-spin text-3xl text-blue-500" />
+        <div className="flex items-center justify-center py-12">
+          <FaSpinner className="animate-spin text-4xl text-orange-500" />
         </div>
       </Card>
     )
@@ -55,19 +55,23 @@ export function CalendarWidget({ refreshInterval = 600000 }: { refreshInterval?:
   if (error) {
     return (
       <Card title="Google Calendar">
-        <p className="text-red-500">{error}</p>
-        <p className="text-sm text-gray-600 mt-2">
-          Google 계정으로 로그인하고 Calendar 권한을 허용해주세요.
-        </p>
+        <div className="text-center py-8">
+          <p className="text-orange-600 font-medium">{error}</p>
+          <p className="text-sm text-stone-600 mt-2">
+            Google 계정으로 로그인하고 Calendar 권한을 허용해주세요.
+          </p>
+        </div>
       </Card>
     )
   }
 
   return (
     <Card title="다가오는 일정 (2주)">
-      <div className="space-y-2 max-h-96 overflow-y-auto">
+      <div className="space-y-2 max-h-96 overflow-y-auto custom-scrollbar">
         {events.length === 0 ? (
-          <p className="text-gray-500 text-center py-4">예정된 일정이 없습니다.</p>
+          <div className="text-center py-8">
+            <p className="text-stone-500">예정된 일정이 없습니다.</p>
+          </div>
         ) : (
           events.map((event) => (
             <a
@@ -75,18 +79,20 @@ export function CalendarWidget({ refreshInterval = 600000 }: { refreshInterval?:
               href={event.htmlLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="block p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+              className="block p-4 bg-gradient-to-r from-orange-50 to-amber-50 rounded-xl border border-orange-100 hover:border-orange-200 hover:shadow-md transition-all group"
             >
-              <div className="flex items-start gap-2">
-                <FaCalendar className="text-blue-500 mt-1 flex-shrink-0" />
+              <div className="flex items-start gap-3">
+                <div className="flex items-center justify-center w-8 h-8 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg flex-shrink-0 group-hover:scale-110 transition-transform">
+                  <FaCalendar className="text-white text-sm" />
+                </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-gray-900">
+                  <p className="text-sm font-semibold text-stone-800">
                     {event.summary || "(제목 없음)"}
                   </p>
                   {event.location && (
-                    <p className="text-xs text-gray-600 mt-1">📍 {event.location}</p>
+                    <p className="text-xs text-stone-600 mt-1">📍 {event.location}</p>
                   )}
-                  <div className="text-xs text-gray-500 mt-1">
+                  <div className="text-xs text-stone-500 mt-2 space-y-1">
                     <p>
                       시작: {new Date(event.start).toLocaleString("ko-KR")}
                     </p>

@@ -38,8 +38,8 @@ export function StockWidget({ refreshInterval = 600000 }: { refreshInterval?: nu
   if (loading) {
     return (
       <Card title="주식">
-        <div className="flex items-center justify-center py-8">
-          <FaSpinner className="animate-spin text-3xl text-blue-500" />
+        <div className="flex items-center justify-center py-12">
+          <FaSpinner className="animate-spin text-4xl text-orange-500" />
         </div>
       </Card>
     )
@@ -51,22 +51,26 @@ export function StockWidget({ refreshInterval = 600000 }: { refreshInterval?: nu
         {stocks.map((stock) => (
           <div
             key={stock.symbol}
-            className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+            className="flex items-center justify-between p-4 bg-gradient-to-r from-orange-50 to-amber-50 rounded-xl border border-orange-100 hover:border-orange-200 transition-all group"
           >
             {stock.error ? (
               <div className="w-full">
-                <p className="font-semibold text-gray-900">{stock.symbol}</p>
-                <p className="text-xs text-red-500">{stock.error}</p>
+                <p className="font-semibold text-stone-800">{stock.symbol}</p>
+                <p className="text-xs text-orange-600 mt-1">{stock.error}</p>
               </div>
             ) : (
               <>
-                <div className="flex items-center gap-2">
-                  <FaChartLine
-                    className={stock.change >= 0 ? "text-green-500" : "text-red-500"}
-                  />
+                <div className="flex items-center gap-3">
+                  <div className={`flex items-center justify-center w-10 h-10 rounded-lg group-hover:scale-110 transition-transform ${
+                    stock.change >= 0
+                      ? "bg-gradient-to-br from-green-500 to-green-600"
+                      : "bg-gradient-to-br from-red-500 to-red-600"
+                  }`}>
+                    <FaChartLine className="text-white" />
+                  </div>
                   <div>
-                    <p className="font-semibold text-gray-900">{stock.symbol}</p>
-                    <p className="text-xs text-gray-600">${stock.price.toFixed(2)}</p>
+                    <p className="font-bold text-stone-800">{stock.symbol}</p>
+                    <p className="text-xs text-stone-600">${stock.price.toFixed(2)}</p>
                   </div>
                 </div>
                 <div className="text-right">

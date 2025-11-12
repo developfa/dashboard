@@ -35,8 +35,8 @@ export function CurrencyWidget({ refreshInterval = 600000 }: { refreshInterval?:
   if (loading) {
     return (
       <Card title="환율">
-        <div className="flex items-center justify-center py-8">
-          <FaSpinner className="animate-spin text-3xl text-blue-500" />
+        <div className="flex items-center justify-center py-12">
+          <FaSpinner className="animate-spin text-4xl text-orange-500" />
         </div>
       </Card>
     )
@@ -45,7 +45,7 @@ export function CurrencyWidget({ refreshInterval = 600000 }: { refreshInterval?:
   if (!currency) {
     return (
       <Card title="환율">
-        <p className="text-red-500">환율 정보를 불러올 수 없습니다.</p>
+        <p className="text-orange-600">환율 정보를 불러올 수 없습니다.</p>
       </Card>
     )
   }
@@ -63,19 +63,21 @@ export function CurrencyWidget({ refreshInterval = 600000 }: { refreshInterval?:
         {Object.entries(currency.rates).map(([code, rate]) => (
           <div
             key={code}
-            className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+            className="flex items-center justify-between p-4 bg-gradient-to-r from-orange-50 to-amber-50 rounded-xl border border-orange-100 hover:border-orange-200 transition-all group"
           >
-            <div className="flex items-center gap-2">
-              <FaDollarSign className="text-green-500" />
+            <div className="flex items-center gap-3">
+              <div className="flex items-center justify-center w-10 h-10 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg group-hover:scale-110 transition-transform">
+                <FaDollarSign className="text-white" />
+              </div>
               <div>
-                <p className="font-semibold text-gray-900">{code}</p>
-                <p className="text-xs text-gray-600">{currencyNames[code] || code}</p>
+                <p className="font-bold text-stone-800">{code}</p>
+                <p className="text-xs text-stone-600">{currencyNames[code] || code}</p>
               </div>
             </div>
-            <p className="text-lg font-bold text-gray-900">₩{rate}</p>
+            <p className="text-lg font-bold text-orange-600">₩{rate}</p>
           </div>
         ))}
-        <p className="text-xs text-gray-500 text-right">
+        <p className="text-xs text-stone-500 text-right mt-4 pt-3 border-t border-orange-100">
           마지막 업데이트: {new Date(currency.lastUpdated).toLocaleString("ko-KR")}
         </p>
       </div>
