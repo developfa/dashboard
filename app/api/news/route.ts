@@ -4,10 +4,10 @@ import Parser from "rss-parser"
 const parser = new Parser()
 
 const NEWS_FEEDS = {
-  경제: "https://news.google.com/rss/search?q=경제&hl=ko&gl=KR&ceid=KR:ko",
-  IT: "https://news.google.com/rss/search?q=IT+기술&hl=ko&gl=KR&ceid=KR:ko",
+  경제: "https://news.google.com/rss/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRGx6Ylc4U0FtdHZHZ0pMVWlnQVAB?hl=ko&gl=KR&ceid=KR:ko",
+  IT: "https://news.google.com/rss/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRGRqTVhZU0FtdHZHZ0pMVWlnQVAB?hl=ko&gl=KR&ceid=KR:ko",
   세계: "https://news.google.com/rss/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRGx1YlY4U0FtdHZHZ0pMVWlnQVAB?hl=ko&gl=KR&ceid=KR:ko",
-  건강: "https://news.google.com/rss/search?q=건강&hl=ko&gl=KR&ceid=KR:ko",
+  건강: "https://news.google.com/rss/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNR3QwTlRFU0FtdHZHZ0pMVWlnQVAB?hl=ko&gl=KR&ceid=KR:ko",
 }
 
 export async function GET(request: Request) {
