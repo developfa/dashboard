@@ -19,16 +19,12 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "User not found" }, { status: 404 })
     }
 
-    const { searchParams } = new URL(request.url)
-    const isArchived = searchParams.get("isArchived") === "true"
-
     const memos = await prisma.memo.findMany({
       where: {
         userId: user.id,
-        isArchived,
       },
       orderBy: [
-        { isPinned: "desc" },
+        { position: "asc" },
         { updatedAt: "desc" },
       ],
     })
@@ -60,7 +56,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { title, content, color, tags, isPinned } = body
+    const { content, color, position } = body
 
     if (!content) {
       return NextResponse.json(
@@ -72,11 +68,9 @@ export async function POST(request: NextRequest) {
     const memo = await prisma.memo.create({
       data: {
         userId: user.id,
-        title: title || "",
         content,
-        color: color || "#fff3cd",
-        tags,
-        isPinned: isPinned || false,
+        color: color || "#FEF3C7",
+        position: position || 0,
       },
     })
 
