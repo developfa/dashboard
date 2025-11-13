@@ -46,49 +46,54 @@ chmod +x /var/www/dashboard/deploy.sh
 
 ## 🎯 배포 방법 (매번 사용)
 
-### Claude Code에서 수정 후
+### 전체 플로우
 
-#### 방법 A: 수동 푸시 + 배포 스크립트 실행
+```
+Claude Code for Web (브라우저에서 수정)
+  ↓ (git push)
+GitHub
+  ↓ (deploy.bat 실행)
+로컬 PC (D:\coding\dashboard)
+  ↓ (SSH 배포)
+Ubuntu Server (116.41.178.213)
+```
 
-1. **Claude Code에서 변경사항 커밋 및 푸시**
-   ```bash
-   git add .
-   git commit -m "수정 내용"
-   git push
-   ```
+### 단계별 실행
 
-2. **로컬 컴퓨터에서 배포 스크립트 실행**
-   ```cmd
-   # D:\coding\dashboard로 이동
-   cd D:\coding\dashboard
+#### 1. Claude Code for Web에서 수정 및 푸시
 
-   # 배포 스크립트 실행
-   deploy.bat
-   ```
+```bash
+# Claude Code for Web에서
+git add .
+git commit -m "수정 내용"
+git push
+```
 
-#### 방법 B: 한 번에 처리 (로컬에서)
+#### 2. 로컬 PC에서 배포 스크립트 실행
 
 ```cmd
 # D:\coding\dashboard로 이동
 cd D:\coding\dashboard
 
-# 최신 변경사항 가져오기
-git pull
-
-# 배포 스크립트 실행
+# 배포 스크립트 실행 (자동으로 pull + 서버 배포)
 deploy.bat
 ```
 
+**deploy.bat가 자동으로 하는 일:**
+1. ✅ GitHub에서 최신 코드 pull
+2. ✅ Ubuntu 서버 SSH 접속
+3. ✅ 서버에서 배포 스크립트 실행
+
 ---
 
-## 📝 배포 스크립트가 하는 일
+## 📝 배포 스크립트 상세
 
-### deploy.bat (로컬)
-1. ✅ GitHub로 push
-2. ✅ SSH로 서버 접속
+### deploy.bat (로컬 PC)
+1. ✅ GitHub에서 최신 코드 pull
+2. ✅ SSH로 Ubuntu 서버 접속
 3. ✅ 서버의 deploy.sh 실행
 
-### deploy.sh (서버)
+### deploy.sh (Ubuntu 서버)
 1. ✅ Git pull (최신 코드 가져오기)
 2. ✅ npm install (의존성 설치)
 3. ✅ npx prisma generate (Prisma 클라이언트 생성)

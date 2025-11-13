@@ -4,15 +4,15 @@ echo Dashboard Deployment Script
 echo ========================================
 echo.
 
-REM Step 1: Push changes to GitHub
-echo [1/3] Pushing changes to GitHub...
-git push -u origin claude/push-local-changes-011CV59qCrqZCBJTBFnkeG9i
+REM Step 1: Pull latest changes from GitHub
+echo [1/3] Pulling latest changes from GitHub...
+git pull origin claude/push-local-changes-011CV59qCrqZCBJTBFnkeG9i
 if %errorlevel% neq 0 (
-    echo ERROR: Failed to push to GitHub
+    echo ERROR: Failed to pull from GitHub
     pause
     exit /b 1
 )
-echo SUCCESS: Pushed to GitHub
+echo SUCCESS: Pulled latest changes from GitHub
 echo.
 
 REM Step 2: Deploy to server via SSH
