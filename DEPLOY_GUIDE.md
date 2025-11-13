@@ -80,60 +80,96 @@ deploy.bat
 ```
 
 **deploy.bat가 자동으로 하는 일:**
-1. ✅ GitHub에서 최신 코드 pull
-2. ✅ Ubuntu 서버 SSH 접속
-3. ✅ 서버에서 배포 스크립트 실행
+1. ✅ WSL을 통해 deploy-rsync.sh 실행
 
 ---
 
-## 📝 배포 스크립트 상세
+## 📝 배포 스크립트 상세 (rsync 방식)
 
-### deploy.bat (로컬 PC)
+### deploy.bat (로컬 PC - Windows)
+- WSL을 통해 deploy-rsync.sh를 실행합니다
+- **WSL이 설치되어 있어야 합니다**
+
+### deploy-rsync.sh (WSL에서 실행)
 1. ✅ GitHub에서 최신 코드 pull
-2. ✅ SSH로 Ubuntu 서버 접속
-3. ✅ 서버의 deploy.sh 실행
-
-### deploy.sh (Ubuntu 서버)
-1. ✅ Git pull (최신 코드 가져오기)
 2. ✅ npm install (의존성 설치)
-3. ✅ npx prisma generate (Prisma 클라이언트 생성)
-4. ✅ npx prisma migrate deploy (DB 마이그레이션)
-5. ✅ npm run build (프로젝트 빌드)
-6. ✅ pm2 restart dashboard (서버 재시작)
+3. ✅ npm run build (로컬에서 빌드)
+4. ✅ SSH 키 권한 수정
+5. ✅ rsync로 변경된 파일만 서버에 전송 (.next 빌드 결과물 포함)
+6. ✅ 서버에서 npm install --production
+7. ✅ 서버에서 Prisma generate 및 PM2 restart
+
+### 💡 rsync 방식의 장점
+- ⚡ **변경된 파일만 전송** (훨씬 빠름!)
+- 🏗️ **로컬에서 빌드** (서버 리소스 절약)
+- 📦 **빌드 결과물도 전송** (서버에서 빌드 불필요)
+- ⏱️ **배포 시간 대폭 단축**
+
+### 대안: deploy-tar.bat (백업용)
+rsync가 안 되면 기존 tar.gz 전송 방식 사용 가능
 
 ---
 
 ## 🔍 문제 해결
 
-### 배포 스크립트 실행이 안 되는 경우
+### 1. WSL이 설치되지 않은 경우
 
-#### 1. SSH 연결 오류
 ```cmd
-# SSH 연결 테스트
-ssh -i D:\coding\.ssh\id_rsa_server -p 8897 root@116.41.178.213 "echo 'Connection OK'"
+# Windows에서 WSL 설치
+wsl --install
+
+# 설치 후 재부팅 필요
+# 재부팅 후 Ubuntu 설정 (사용자 이름/비밀번호 입력)
 ```
 
-#### 2. 권한 오류
+**또는 대안: deploy-tar.bat 사용**
+```cmd
+deploy-tar.bat
+```
+
+### 2. "wsl: command not found" 오류
+
+```cmd
+# PowerShell 관리자 권한으로 실행
+dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
+dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
+
+# 재부팅 후
+wsl --install -d Ubuntu
+```
+
+### 3. rsync 오류
+
+WSL Ubuntu에 rsync가 없는 경우:
 ```bash
-# 서버에서
-chmod +x /var/www/dashboard/deploy.sh
+# WSL에서
+sudo apt update
+sudo apt install rsync -y
 ```
 
-#### 3. Git pull 충돌
+### 4. SSH 연결 오류
 ```bash
-# 서버에서
-cd /var/www/dashboard
-git status
-git stash  # 로컬 변경사항 임시 저장
-git pull
+# WSL에서 테스트
+ssh -i /mnt/d/coding/.ssh/id_rsa_server -p 8897 root@116.41.178.213 "echo 'Connection OK'"
 ```
 
-#### 4. PM2 오류
+### 5. PM2 오류
 ```bash
 # 서버에서
 pm2 status
 pm2 logs dashboard --lines 50
 pm2 restart dashboard
+```
+
+### 6. 빌드 오류
+
+로컬 빌드가 실패하면:
+```bash
+# 로컬 PC (WSL)에서
+cd /mnt/d/coding/dashboard
+rm -rf node_modules .next
+npm install
+npm run build
 ```
 
 ---
