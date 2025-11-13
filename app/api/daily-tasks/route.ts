@@ -43,7 +43,6 @@ export async function GET(request: NextRequest) {
     const dailyTasks = await prisma.dailyTask.findMany({
       where,
       orderBy: [
-        { position: "asc" },
         { createdAt: "asc" },
       ],
     })
@@ -75,11 +74,11 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { content, date, position } = body
+    const { title, date, priority } = body
 
-    if (!content) {
+    if (!title) {
       return NextResponse.json(
-        { error: "Content is required" },
+        { error: "Title is required" },
         { status: 400 }
       )
     }
@@ -87,9 +86,9 @@ export async function POST(request: NextRequest) {
     const dailyTask = await prisma.dailyTask.create({
       data: {
         userId: user.id,
-        content,
+        title,
         date: date ? new Date(date) : new Date(),
-        position: position || 0,
+        priority: priority || 0,
       },
     })
 
