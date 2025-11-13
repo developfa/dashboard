@@ -17,6 +17,10 @@ echo.
 
 REM Step 2: Deploy to server via SSH
 echo [2/3] Deploying to server...
+REM Fix SSH key permissions silently
+icacls "D:\coding\.ssh\id_rsa_server" /remove "NT AUTHORITY\Authenticated Users" >nul 2>&1
+icacls "D:\coding\.ssh\id_rsa_server" /inheritance:r >nul 2>&1
+icacls "D:\coding\.ssh\id_rsa_server" /grant:r "%USERNAME%:(R)" >nul 2>&1
 ssh -i D:\coding\.ssh\id_rsa_server -p 8897 root@116.41.178.213 "bash /var/www/dashboard/deploy.sh"
 if %errorlevel% neq 0 (
     echo ERROR: Deployment failed
