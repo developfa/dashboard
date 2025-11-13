@@ -17,7 +17,11 @@ echo.
 
 REM Step 2: Deploy to server via SSH
 echo [2/3] Deploying to server...
-ssh -F D:\coding\.ssh\config 116.41.178.213 "bash /var/www/dashboard/deploy.sh"
+REM Use icacls to fix permissions on-the-fly before SSH
+icacls "D:\coding\.ssh\id_rsa_server" /reset >nul 2>&1
+icacls "D:\coding\.ssh\id_rsa_server" /inheritance:r >nul 2>&1
+icacls "D:\coding\.ssh\id_rsa_server" /grant:r "%USERNAME%:(R)" >nul 2>&1
+ssh -i D:\coding\.ssh\id_rsa_server -p 8897 root@116.41.178.213 "bash /var/www/dashboard/deploy.sh"
 if %errorlevel% neq 0 (
     echo ERROR: Deployment failed
     pause
