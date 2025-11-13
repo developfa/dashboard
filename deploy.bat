@@ -17,7 +17,7 @@ echo.
 
 REM Step 2: Deploy to server via SSH
 echo [2/3] Deploying to server...
-ssh -i D:\coding\.ssh\id_rsa_server -p 8897 root@116.41.178.213 "bash /var/www/dashboard/deploy.sh"
+ssh -F D:\coding\.ssh\config 116.41.178.213 "bash /var/www/dashboard/deploy.sh"
 if %errorlevel% neq 0 (
     echo ERROR: Deployment failed
     pause
