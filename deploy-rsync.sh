@@ -11,7 +11,7 @@ REMOTE_PATH="/var/www/dashboard"
 SSH_KEY="/mnt/d/coding/.ssh/id_rsa_server"
 
 echo "[1/6] Pulling latest changes from GitHub..."
-git pull origin main
+git pull origin claude/push-local-changes-011CV59qCrqZCBJTBFnkeG9i
 if [ $? -ne 0 ]; then
     echo "ERROR: Git pull failed"
     exit 1
