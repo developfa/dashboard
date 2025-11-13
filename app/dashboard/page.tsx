@@ -3,18 +3,17 @@
 import { useSession, signOut } from "next-auth/react"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
-import { FaSpinner, FaCog, FaSignOutAlt } from "react-icons/fa"
+import { FaSpinner, FaCog, FaSignOutAlt, FaCalendarAlt, FaNewspaper } from "react-icons/fa"
 import { NewsWidget } from "@/components/widgets/NewsWidget"
 import { WeatherWidget } from "@/components/widgets/WeatherWidget"
 import { CurrencyWidget } from "@/components/widgets/CurrencyWidget"
 import { StockWidget } from "@/components/widgets/StockWidget"
-import { GmailWidget } from "@/components/widgets/GmailWidget"
-import { CalendarWidget } from "@/components/widgets/CalendarWidget"
 
 export default function Dashboard() {
   const { data: session, status } = useSession()
   const router = useRouter()
   const [refreshInterval, setRefreshInterval] = useState(600000) // 10분 기본값
+  const [activeTab, setActiveTab] = useState<"schedule" | "news">("news")
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -36,8 +35,8 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen" style={{ background: '#FFFBEB' }}>
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b border-orange-100">
+      {/* Header - Fixed */}
+      <header className="bg-white shadow-sm border-b border-orange-100 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -71,41 +70,73 @@ export default function Dashboard() {
             </div>
           </div>
         </div>
-      </header>
 
-      {/* Dashboard Grid */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {/* 뉴스 위젯 - 전체 너비 */}
-          <div className="lg:col-span-3">
-            <NewsWidget refreshInterval={refreshInterval} />
-          </div>
-
-          {/* 날씨 위젯 */}
-          <div>
-            <WeatherWidget refreshInterval={refreshInterval} />
-          </div>
-
-          {/* 환율 위젯 */}
-          <div>
-            <CurrencyWidget refreshInterval={refreshInterval} />
-          </div>
-
-          {/* 주식 위젯 */}
-          <div>
-            <StockWidget refreshInterval={refreshInterval} />
-          </div>
-
-          {/* Gmail 위젯 - 2칸 */}
-          <div className="lg:col-span-2">
-            <GmailWidget refreshInterval={refreshInterval} />
-          </div>
-
-          {/* Calendar 위젯 - 1칸 */}
-          <div>
-            <CalendarWidget refreshInterval={refreshInterval} />
+        {/* Navigation Tabs */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex gap-1 border-t border-orange-100 pt-2">
+            <button
+              onClick={() => setActiveTab("news")}
+              className={`flex items-center gap-2 px-6 py-3 rounded-t-xl font-medium transition-all duration-200 ${
+                activeTab === "news"
+                  ? "bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-md"
+                  : "text-stone-700 hover:bg-orange-50"
+              }`}
+            >
+              <FaNewspaper />
+              <span>뉴스</span>
+            </button>
+            <button
+              onClick={() => setActiveTab("schedule")}
+              className={`flex items-center gap-2 px-6 py-3 rounded-t-xl font-medium transition-all duration-200 ${
+                activeTab === "schedule"
+                  ? "bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-md"
+                  : "text-stone-700 hover:bg-orange-50"
+              }`}
+            >
+              <FaCalendarAlt />
+              <span>일정관리</span>
+            </button>
           </div>
         </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* 뉴스 탭 */}
+        {activeTab === "news" && (
+          <div className="space-y-6">
+            {/* 뉴스 위젯 - 전체 너비 */}
+            <NewsWidget refreshInterval={refreshInterval} />
+
+            {/* 하단 정보 위젯들 */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {/* 날씨 위젯 */}
+              <div>
+                <WeatherWidget refreshInterval={refreshInterval} />
+              </div>
+
+              {/* 환율 위젯 */}
+              <div>
+                <CurrencyWidget refreshInterval={refreshInterval} />
+              </div>
+
+              {/* 주식 위젯 */}
+              <div>
+                <StockWidget refreshInterval={refreshInterval} />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* 일정관리 탭 */}
+        {activeTab === "schedule" && (
+          <div className="space-y-6">
+            <div className="bg-white rounded-2xl shadow-lg border border-orange-100 p-8">
+              <h2 className="text-xl font-bold text-stone-800 mb-4">일정관리</h2>
+              <p className="text-stone-600">일정관리 기능이 여기에 추가됩니다.</p>
+            </div>
+          </div>
+        )}
       </main>
 
       {/* Footer */}
