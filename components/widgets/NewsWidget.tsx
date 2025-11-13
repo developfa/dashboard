@@ -16,10 +16,15 @@ interface NewsCategory {
   items: NewsItem[]
 }
 
-export function NewsWidget({ refreshInterval = 600000 }: { refreshInterval?: number }) {
+interface NewsWidgetProps {
+  refreshInterval?: number
+  filterCategories?: string[]
+}
+
+export function NewsWidget({ refreshInterval = 600000, filterCategories }: NewsWidgetProps) {
   const [news, setNews] = useState<NewsCategory[]>([])
   const [loading, setLoading] = useState(true)
-  const [selectedCategory, setSelectedCategory] = useState("한국")
+  const [selectedCategory, setSelectedCategory] = useState("")
   const [showAll, setShowAll] = useState(false)
 
   const fetchNews = async () => {
@@ -40,7 +45,23 @@ export function NewsWidget({ refreshInterval = 600000 }: { refreshInterval?: num
     return () => clearInterval(interval)
   }, [refreshInterval])
 
-  const selectedNews = news.find((n) => n.category === selectedCategory)
+  // 필터링된 뉴스 카테고리
+  const filteredNews = filterCategories
+    ? news.filter((n) => filterCategories.includes(n.category))
+    : news
+
+  // 첫 번째 카테고리를 기본 선택으로 설정
+  useEffect(() => {
+    if (filteredNews.length > 0 && !selectedCategory) {
+      setSelectedCategory(filteredNews[0].category)
+    }
+    // 현재 선택된 카테고리가 필터에 없으면 첫 번째로 변경
+    if (selectedCategory && !filteredNews.find((n) => n.category === selectedCategory)) {
+      setSelectedCategory(filteredNews[0]?.category || "")
+    }
+  }, [filteredNews, selectedCategory])
+
+  const selectedNews = filteredNews.find((n) => n.category === selectedCategory)
   const displayedItems = showAll ? selectedNews?.items : selectedNews?.items.slice(0, 5)
 
   const handleCategoryChange = (category: string) => {
@@ -51,7 +72,7 @@ export function NewsWidget({ refreshInterval = 600000 }: { refreshInterval?: num
   return (
     <Card title="주요 뉴스">
       <div className="flex gap-2 mb-6 flex-wrap">
-        {news.map((n) => (
+        {filteredNews.map((n) => (
           <button
             key={n.category}
             onClick={() => handleCategoryChange(n.category)}
