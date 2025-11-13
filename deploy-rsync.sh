@@ -59,7 +59,7 @@ echo "SUCCESS: Files synced"
 echo ""
 
 echo "[6/6] Installing dependencies and restarting on server..."
-ssh -i "$SSH_KEY" -p $PORT $SERVER "cd $REMOTE_PATH && npm install --production && npx prisma generate && pm2 restart dashboard || pm2 start ecosystem.config.js"
+ssh -i "$SSH_KEY" -p $PORT $SERVER "cd $REMOTE_PATH && npm install --production && npx prisma generate && pm2 restart dashboard --update-env || pm2 start ecosystem.config.js"
 if [ $? -ne 0 ]; then
     echo "ERROR: Failed to restart"
     exit 1

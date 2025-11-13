@@ -10,7 +10,7 @@ echo Starting deployment...
 echo.
 
 REM Run deploy-rsync.sh via WSL
-wsl bash -c "cd /mnt/d/coding/dashboard && chmod +x deploy-rsync.sh && ./deploy-rsync.sh"
+wsl bash -c "cd /mnt/d/coding/dashboard && bash deploy-rsync.sh"
 
 if %errorlevel% neq 0 (
     echo.

@@ -1,7 +1,17 @@
 {
   "permissions": {
     "allow": [
-      "Bash(rsync:*)"
+      "Bash(rsync:*)",
+      "Bash(git push:*)",
+      "Bash(wsl --version:*)",
+      "Bash(wsl echo:*)",
+      "Bash(wsl:*)",
+      "Bash(ssh:*)",
+      "Bash(cat:*)",
+      "Bash(git cherry-pick:*)",
+      "Bash(/tmp/news_widget_4ce5b58.tsx)",
+      "Bash(scp:*)",
+      "Bash(git add:*)"
     ],
     "deny": [],
     "ask": []
