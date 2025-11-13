@@ -9,16 +9,13 @@ echo.
 echo Starting deployment...
 echo.
 
-REM Fix line endings before running
-echo Checking dos2unix availability...
-wsl dos2unix --version >nul 2>&1
-if %errorlevel% neq 0 (
-    echo Installing dos2unix in WSL...
-    wsl sudo apt update && wsl sudo apt install dos2unix -y
-)
+REM Fix line endings using Git
+echo Configuring Git for proper line endings...
+git config core.autocrlf false
+git config core.eol lf
 
-echo Converting line endings in deploy-rsync.sh...
-wsl dos2unix /mnt/d/coding/dashboard/deploy-rsync.sh
+echo Resetting deploy-rsync.sh to use LF line endings...
+git checkout -- deploy-rsync.sh
 
 REM Run deploy-rsync.sh via WSL
 wsl bash -c "cd /mnt/d/coding/dashboard && bash deploy-rsync.sh"
